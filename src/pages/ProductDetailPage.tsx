@@ -5,8 +5,11 @@ import { Star, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/app/ProductCard";
+import { useCart } from "@/context/cart-context";
 
 export default function ProductDetailPage() {
+  const cart = useCart();
+
   const { slug } = useParams<{ slug: string }>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
@@ -230,12 +233,14 @@ export default function ProductDetailPage() {
             </div>
             <Button
               onClick={() => {
-                // Add to cart logic here
-                console.log("Add to cart:", {
-                  product: product.id,
-                  variant: selectedVariant?.id,
+                cart.addItem({
+                  variantId: selectedVariant?.id,
                   quantity: quantity,
+                  title: product.title + " - " + selectedVariant?.name,
+                  imgUrl: imgUrls[0],
+                  price: selectedVariant?.price,
                 });
+                alert("Đã thêm vào giỏ hàng");
               }}
               className="w-full"
               size="lg"

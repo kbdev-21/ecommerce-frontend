@@ -46,3 +46,17 @@ export async function fetchCategories(): Promise<any> {
     const response = await axios.get<any>(`${API_BASE_URL}/categories`);
     return response.data;
 }
+
+export async function calculateOrder(data: {
+    items: Array<{
+        variantId: string;
+        quantity: number;
+    }>;
+    discountCode?: string;
+}): Promise<any> {
+    const response = await axios.post<any>(
+        `${API_BASE_URL}/orders/calculate`,
+        data
+    );
+    return response.data;
+}
