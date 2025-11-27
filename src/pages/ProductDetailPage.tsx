@@ -1,24 +1,53 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchProductBySlug, fetchProducts } from "@/api/ecommerce-api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchProductBySlug,
+  fetchProducts,
+  createRating,
+} from "@/api/ecommerce-api";
 import { Star, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/app/ProductCard";
 import { useCart } from "@/context/cart-context";
+import { useAuth } from "@/context/auth-context";
+import { Input } from "@/components/ui/input";
 
 export default function ProductDetailPage() {
   const cart = useCart();
+  const auth = useAuth();
+  const queryClient = useQueryClient();
 
   const { slug } = useParams<{ slug: string }>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
+  const [ratingScore, setRatingScore] = useState(5);
+  const [ratingComment, setRatingComment] = useState("");
 
   const productQuery = useQuery({
     queryKey: ["product", slug],
     queryFn: () => fetchProductBySlug(slug!),
     enabled: !!slug,
+  });
+
+  const ratingMutation = useMutation({
+    mutationFn: () =>
+      createRating(productQuery.data!.id, {
+        userName: auth.user?.name || "",
+        userId: auth.user?.id || "",
+        score: ratingScore,
+        comment: ratingComment,
+      }),
+    onSuccess: () => {
+      alert("Đánh giá thành công!");
+      setRatingScore(5);
+      setRatingComment("");
+      queryClient.invalidateQueries({ queryKey: ["product", slug] });
+    },
+    onError: () => {
+      alert("Lỗi khi gửi đánh giá");
+    },
   });
 
   const product = productQuery.data;
@@ -236,7 +265,10 @@ export default function ProductDetailPage() {
                 cart.addItem({
                   variantId: selectedVariant?.id,
                   quantity: quantity,
-                  title: product.title + " - " + selectedVariant?.name,
+                  title:
+                    product.title +
+                    " - " +
+                    selectedVariant?.name,
                   imgUrl: imgUrls[0],
                   price: selectedVariant?.price,
                 });
@@ -252,9 +284,68 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Ratings Section */}
-      {ratings.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <div className="text-2xl font-[600]">Đánh giá sản phẩm</div>
+      <div className="flex flex-col gap-4">
+        <div className="text-2xl font-[600]">Đánh giá sản phẩm</div>
+
+        {/* Rating Form - Only show if logged in */}
+        {auth.isLoggedIn() && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              ratingMutation.mutate();
+            }}
+            className="flex flex-col gap-4 p-4 border rounded-lg bg-muted/30"
+          >
+            <div className="flex flex-col gap-2">
+              <div className="text-sm font-medium">Đánh giá</div>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((score) => (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => setRatingScore(score)}
+                    className="p-1 hover:scale-110 transition-transform cursor-pointer"
+                  >
+                    <Star
+                      className={`w-8 h-8 ${score <= ratingScore
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300"
+                        }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="comment"
+                className="text-sm font-medium"
+              >
+                Nhận xét
+              </label>
+              <Input
+                id="comment"
+                placeholder="Nhập nhận xét của bạn..."
+                value={ratingComment}
+                onChange={(e) =>
+                  setRatingComment(e.target.value)
+                }
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-fit"
+              disabled={ratingMutation.isPending}
+            >
+              {ratingMutation.isPending
+                ? "Đang gửi..."
+                : "Gửi đánh giá"}
+            </Button>
+          </form>
+        )}
+
+        {/* Existing Ratings */}
+        {ratings.length > 0 ? (
           <div className="flex flex-col gap-4">
             {ratings.map((rating: any) => (
               <div
@@ -290,8 +381,12 @@ export default function ProductDetailPage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-muted-foreground">
+            Chưa có đánh giá nào
+          </p>
+        )}
+      </div>
 
       {/* Related Products Section */}
       {product && (

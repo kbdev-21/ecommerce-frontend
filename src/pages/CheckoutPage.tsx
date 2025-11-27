@@ -3,13 +3,15 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/auth-context";
 import { useCart } from "@/context/cart-context";
 import { SimpleSelectDropdown } from "@/components/app/SimpleSelectDropdown";
-import { calculateOrder } from "@/api/ecommerce-api";
+import { calculateOrder, createOrder } from "@/api/ecommerce-api";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function CheckoutPage() {
   const cart = useCart();
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const [fullName, setFullName] = useState(auth.user?.name || "");
   const [email, setEmail] = useState(auth.user?.email || "");
@@ -62,6 +64,29 @@ export default function CheckoutPage() {
     },
     onError: () => {
       alert("Lỗi khi tính toán đơn hàng");
+    },
+  });
+
+  const placeOrderMutation = useMutation({
+    mutationFn: () =>
+      createOrder({
+        fullName,
+        email,
+        phoneNum,
+        addressDetail: address,
+        items: cart.items.map((item) => ({
+          variantId: item.variantId,
+          quantity: item.quantity,
+        })),
+        discountCode: discountCode === "" ? undefined : discountCode,
+      }),
+    onSuccess: (data) => {
+      cart.clearCart();
+      alert(`Đặt hàng thành công! Mã đơn hàng: ${data.id}`);
+      navigate("/");
+    },
+    onError: () => {
+      alert("Thông tin không đầy đủ hoặc mã giảm giá không hợp lệ");
     },
   });
 
@@ -288,12 +313,12 @@ export default function CheckoutPage() {
                 <Button
                   className="w-full mt-4"
                   size="lg"
-                  onClick={() => {
-                    // TODO: Implement order placement
-                    alert("Đặt hàng thành công!");
-                  }}
+                  onClick={() => placeOrderMutation.mutate()}
+                  disabled={placeOrderMutation.isPending}
                 >
-                  Đặt hàng
+                  {placeOrderMutation.isPending
+                    ? "Đang xử lý..."
+                    : "Đặt hàng"}
                 </Button>
               </div>
             </div>
