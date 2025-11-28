@@ -141,7 +141,7 @@ export default function ProfilePage() {
                 {addresses.map((address, index) => (
                     <div
                         key={index}
-                        className="flex flex-col gap-2 p-3 border rounded-lg"
+                        className="flex flex-col gap-2 p-3 border rounded-lg border-border"
                     >
                         <div className="flex justify-between items-start">
                             <div className="flex-1">
@@ -210,12 +210,12 @@ export default function ProfilePage() {
                     </p>
                 )}
                 {ordersQuery.data && ordersQuery.data.length > 0 && (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 ">
                         {ordersQuery.data.map((order) => {
                             return (
                                 <div
                                     key={order.id}
-                                    className="p-4 border rounded-lg space-y-3"
+                                    className="p-4 border rounded-lg space-y-3 border-border"
                                 >
                                     <div className="flex justify-between items-start">
                                         <div>
@@ -243,7 +243,7 @@ export default function ProfilePage() {
                                         })}
                                     </div>
 
-                                    <div className="border-t pt-3 space-y-2">
+                                    <div className="border-t border-border pt-3 space-y-2">
                                         {order.lines.map((line) => (
                                             <div
                                                 key={line.variantId}
@@ -276,7 +276,7 @@ export default function ProfilePage() {
                                         ))}
                                     </div>
 
-                                    <div className="border-t pt-3 flex justify-between items-center">
+                                    <div className="border-t border-border pt-3 flex justify-between items-center">
                                         <div className="text-sm text-muted-foreground">
                                             Giao đến: {order.addressDetail}
                                         </div>

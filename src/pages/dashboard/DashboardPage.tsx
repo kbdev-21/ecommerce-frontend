@@ -85,32 +85,32 @@ export default function DashboardPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 max-w-4xl">
-          <div className="p-4 border rounded-lg bg-card">
+          <div className="p-4 border rounded-lg bg-card border-border">
             <p className="text-sm text-muted-foreground">
               Tổng doanh thu
             </p>
-            <p className="text-2xl font-bold mt-1">
+            <p className="text-xl font-bold mt-1">
               {revenue.toLocaleString("vi-VN")}đ
             </p>
           </div>
-          <div className="p-4 border rounded-lg bg-card">
+          <div className="p-4 border rounded-lg bg-card border-border">
             <p className="text-sm text-muted-foreground">
               Đơn hàng
             </p>
-            <p className="text-2xl font-bold mt-1">
+            <p className="text-xl font-bold mt-1">
               {completedOrderCount}
             </p>
           </div>
-          <div className="p-4 border rounded-lg bg-card">
+          <div className="p-4 border rounded-lg bg-card border-border">
             <p className="text-sm text-muted-foreground">Users</p>
-            <p className="text-2xl font-bold mt-1">{userCount}</p>
+            <p className="text-xl font-bold mt-1">{userCount}</p>
           </div>
         </div>
 
         {/* Top 10 products chart (horizontal bars) */}
         <div className="max-w-4xl">
-          <div className="border rounded-xl bg-card shadow-sm overflow-hidden">
-            <div className="bg-muted/50 px-6 py-4 border-b">
+          <div className="border rounded-xl bg-card shadow-sm overflow-hidden border-border">
+            <div className="bg-muted/50 px-6 py-4 border-b border-border">
               <h2 className="text-xl font-semibold">
                 Top 10 sản phẩm bán chạy nhất
               </h2>

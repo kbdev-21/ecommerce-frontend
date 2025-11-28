@@ -257,7 +257,7 @@ export default function OrderDetailPage() {
                     {/* Order Lines */}
                     <div className="space-y-4">
                         <h2 className="text-lg font-semibold">Sản phẩm</h2>
-                        <div className="border rounded-lg overflow-hidden">
+                        <div className="border rounded-lg overflow-hidden border-border">
                             <table className="w-full">
                                 <thead className="bg-muted/50">
                                     <tr>
@@ -282,7 +282,7 @@ export default function OrderDetailPage() {
                                     {order.lines.map((line) => (
                                         <tr
                                             key={`${line.productId}-${line.variantId}`}
-                                            className="border-t"
+                                            className="border-t border-border"
                                         >
                                             <td className="p-3 text-sm font-medium">
                                                 {line.displayName}

@@ -58,7 +58,7 @@ export default function OrdersPage() {
           <p className="text-red-500">Lỗi khi tải đơn hàng</p>
         ) : (
           <>
-            <div className="border rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden border-border">
               <table className="w-full">
                 <thead className="bg-muted/50">
                   <tr>
@@ -99,7 +99,7 @@ export default function OrdersPage() {
                     orders.map((order) => (
                       <tr
                         key={order.id}
-                        className="border-t hover:bg-muted/30 cursor-pointer"
+                        className="border-t border-border hover:bg-muted/30 cursor-pointer"
                         onClick={() =>
                           navigate(
                             `/dashboard/orders/${order.id}`

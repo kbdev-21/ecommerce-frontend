@@ -185,7 +185,7 @@ export default function ProductsPage() {
                     <p className="text-red-500">Lỗi khi tải sản phẩm</p>
                 ) : (
                     <>
-                        <div className="border rounded-lg overflow-hidden">
+                        <div className="border rounded-lg overflow-hidden border-border">
                             <table className="w-full">
                                 <thead className="bg-muted/50">
                                     <tr>
@@ -223,7 +223,7 @@ export default function ProductsPage() {
                                         products.map((product: Product) => (
                                             <tr
                                                 key={product.id}
-                                                className="border-t hover:bg-muted/30 cursor-pointer"
+                                                className="border-t border-border hover:bg-muted/30 cursor-pointer"
                                                 onClick={() =>
                                                     navigate(
                                                         `/dashboard/products/${product.slug}`

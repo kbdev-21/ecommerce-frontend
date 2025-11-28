@@ -282,7 +282,7 @@ export default function ProductAdminViewPage() {
             {variants.map((variant, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg space-y-3"
+                className="p-4 border rounded-lg space-y-3 border-border"
               >
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">
