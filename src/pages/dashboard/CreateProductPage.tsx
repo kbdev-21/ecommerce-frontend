@@ -29,14 +29,17 @@ export default function CreateProductPage() {
 
     const createMutation = useMutation({
         mutationFn: () =>
-            createProduct({
-                title,
-                description: description || undefined,
-                category,
-                brand,
-                imgUrls: imgUrls.filter((url) => url.trim() !== ""),
-                variants,
-            }),
+            createProduct(
+                {
+                    title,
+                    description: description || undefined,
+                    category,
+                    brand,
+                    imgUrls: imgUrls.filter((url) => url.trim() !== ""),
+                    variants,
+                },
+                auth.token!
+            ),
         onSuccess: (data) => {
             alert("Tạo sản phẩm thành công!");
             navigate(`/dashboard/products/${data.slug}`);
@@ -253,13 +256,20 @@ export default function CreateProductPage() {
                                         </label>
                                         <Input
                                             type="number"
-                                            value={variant.price}
+                                            value={
+                                                variant.price === 0
+                                                    ? ""
+                                                    : variant.price
+                                            }
                                             onChange={(e) =>
                                                 updateVariant(
                                                     index,
                                                     "price",
-                                                    parseInt(e.target.value) ||
-                                                        0
+                                                    e.target.value === ""
+                                                        ? 0
+                                                        : parseInt(
+                                                              e.target.value
+                                                          ) || 0
                                                 )
                                             }
                                         />
@@ -270,13 +280,20 @@ export default function CreateProductPage() {
                                         </label>
                                         <Input
                                             type="number"
-                                            value={variant.stock}
+                                            value={
+                                                variant.stock === 0
+                                                    ? ""
+                                                    : variant.stock
+                                            }
                                             onChange={(e) =>
                                                 updateVariant(
                                                     index,
                                                     "stock",
-                                                    parseInt(e.target.value) ||
-                                                        0
+                                                    e.target.value === ""
+                                                        ? 0
+                                                        : parseInt(
+                                                              e.target.value
+                                                          ) || 0
                                                 )
                                             }
                                         />

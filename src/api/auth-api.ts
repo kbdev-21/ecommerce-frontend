@@ -159,3 +159,34 @@ export async function toggleBanUser(
     );
     return response.data;
 }
+
+export type ForgetPasswordInitResponse = {
+    message: string;
+    requestId: string;
+};
+
+export type ForgetPasswordInitRequest = {
+    email: string;
+};
+
+export async function forgetPasswordInit(
+    data: ForgetPasswordInitRequest
+): Promise<ForgetPasswordInitResponse> {
+    const response = await axios.post<ForgetPasswordInitResponse>(
+        `${API_BASE_URL}/auth/forget-password/init`,
+        data
+    );
+    return response.data;
+}
+
+export type ForgetPasswordConfirmRequest = {
+    requestId: string;
+    otp: string;
+    newPassword: string;
+};
+
+export async function forgetPasswordConfirm(
+    data: ForgetPasswordConfirmRequest
+): Promise<void> {
+    await axios.post(`${API_BASE_URL}/auth/forget-password/confirm`, data);
+}

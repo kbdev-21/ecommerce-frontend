@@ -145,13 +145,55 @@ export async function createOrder(
     return response.data;
 }
 
+export type UpdateOrderStatusRequest = {
+    id: string;
+    status: string;
+};
+
+export async function updateOrderStatus(
+    data: UpdateOrderStatusRequest,
+    token: string
+): Promise<CreateOrderResponse> {
+    const response = await axios.patch<CreateOrderResponse>(
+        `${API_BASE_URL}/orders/status`,
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    return response.data;
+}
+
 export async function fetchOrders(
-    email?: string
+    email?: string,
+    start?: number,
+    count?: number
 ): Promise<CreateOrderResponse[]> {
-    const url = email
-        ? `${API_BASE_URL}/orders?email=${encodeURIComponent(email)}`
-        : `${API_BASE_URL}/orders`;
+    const params: string[] = [];
+    if (email) params.push(`email=${encodeURIComponent(email)}`);
+    if (typeof start === "number") params.push(`start=${start}`);
+    if (typeof count === "number") params.push(`count=${count}`);
+
+    const query = params.length > 0 ? `?${params.join("&")}` : "";
+    const url = `${API_BASE_URL}/orders${query}`;
     const response = await axios.get<CreateOrderResponse[]>(url);
+    return response.data;
+}
+
+export async function fetchOrderById(
+    id: string,
+    token: string
+): Promise<CreateOrderResponse> {
+    const response = await axios.get<CreateOrderResponse>(
+        `${API_BASE_URL}/orders/${id}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
     return response.data;
 }
 
@@ -164,13 +206,25 @@ export type CreateRatingRequest = {
 
 export async function createRating(
     productId: string,
-    data: CreateRatingRequest
+    data: CreateRatingRequest,
+    token: string
 ): Promise<void> {
-    await axios.post(`${API_BASE_URL}/products/${productId}/ratings`, data);
+    await axios.post(`${API_BASE_URL}/products/${productId}/ratings`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 }
 
-export async function deleteProduct(productId: string): Promise<void> {
-    await axios.delete(`${API_BASE_URL}/products/${productId}`);
+export async function deleteProduct(
+    productId: string,
+    token: string
+): Promise<void> {
+    await axios.delete(`${API_BASE_URL}/products/${productId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 }
 
 export type UpdateVariantRequest = {
@@ -191,11 +245,17 @@ export type UpdateProductRequest = {
 
 export async function updateProduct(
     productId: string,
-    data: UpdateProductRequest
+    data: UpdateProductRequest,
+    token: string
 ): Promise<Product> {
     const response = await axios.patch<Product>(
         `${API_BASE_URL}/products/${productId}`,
-        data
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     );
     return response.data;
 }
@@ -210,11 +270,107 @@ export type CreateProductRequest = {
 };
 
 export async function createProduct(
-    data: CreateProductRequest
+    data: CreateProductRequest,
+    token: string
 ): Promise<Product> {
     const response = await axios.post<Product>(
         `${API_BASE_URL}/products`,
-        data
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    return response.data;
+}
+
+export type Discount = {
+    _id: string;
+    id: string;
+    code: string;
+    discountValue: number;
+    usageCount: number;
+    usageLimit: number;
+    createdAt: string;
+    __v: number;
+};
+
+export async function fetchDiscounts(token: string): Promise<Discount[]> {
+    const response = await axios.get<Discount[]>(`${API_BASE_URL}/discounts`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
+}
+
+export type CreateDiscountRequest = {
+    code: string;
+    discountValue: number;
+    usageLimit: number;
+};
+
+export async function createDiscount(
+    data: CreateDiscountRequest,
+    token: string
+): Promise<Discount> {
+    const response = await axios.post<Discount>(
+        `${API_BASE_URL}/discounts`,
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    return response.data;
+}
+
+export async function deleteDiscount(id: string, token: string): Promise<void> {
+    await axios.delete(`${API_BASE_URL}/discounts/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
+
+export async function fetchDashboardUserCount(token: string): Promise<number> {
+    const response = await axios.get<number>(
+        `${API_BASE_URL}/users/dashboard/count`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    return response.data;
+}
+
+export async function fetchDashboardOrderRevenue(
+    token: string
+): Promise<number> {
+    const response = await axios.get<number>(
+        `${API_BASE_URL}/orders/dashboard/revenue`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    return response.data;
+}
+
+export async function fetchDashboardCompletedOrderCount(
+    token: string
+): Promise<number> {
+    const response = await axios.get<number>(
+        `${API_BASE_URL}/orders/dashboard/count`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     );
     return response.data;
 }

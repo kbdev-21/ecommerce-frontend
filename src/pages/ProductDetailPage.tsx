@@ -33,12 +33,16 @@ export default function ProductDetailPage() {
 
   const ratingMutation = useMutation({
     mutationFn: () =>
-      createRating(productQuery.data!.id, {
-        userName: auth.user?.name || "",
-        userId: auth.user?.id || "",
-        score: ratingScore,
-        comment: ratingComment,
-      }),
+      createRating(
+        productQuery.data!.id,
+        {
+          userName: auth.user?.name || "",
+          userId: auth.user?.id || "",
+          score: ratingScore,
+          comment: ratingComment,
+        },
+        auth.token!
+      ),
     onSuccess: () => {
       alert("Đánh giá thành công!");
       setRatingScore(5);

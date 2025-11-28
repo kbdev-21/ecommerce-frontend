@@ -101,8 +101,11 @@ export default function ProductsPage() {
     const products = Array.isArray(productsQuery.data)
         ? productsQuery.data
         : productsQuery.data?.products || [];
-    const total = productsQuery.data?.total || products.length;
-    const totalPages = Math.ceil(total / pageSize) || 1;
+
+    const totalFromApi = productsQuery.data?.total as number | undefined;
+    const totalPages = totalFromApi
+        ? Math.max(1, Math.ceil(totalFromApi / pageSize))
+        : undefined;
 
     const brands = Array.isArray(brandsQuery.data)
         ? brandsQuery.data
@@ -264,7 +267,11 @@ export default function ProductsPage() {
                         {/* Pagination */}
                         <div className="flex items-center justify-between mt-4">
                             <p className="text-sm text-muted-foreground">
-                                Hiển thị {products.length} / {total} sản phẩm
+                                Hiển thị {products.length}
+                                {totalFromApi !== undefined
+                                    ? ` / ${totalFromApi}`
+                                    : ""}{" "}
+                                sản phẩm
                             </p>
                             <div className="flex gap-2">
                                 <Button
@@ -281,12 +288,19 @@ export default function ProductsPage() {
                                     Trước
                                 </Button>
                                 <span className="flex items-center px-3 text-sm">
-                                    Trang {page} / {totalPages || 1}
+                                    Trang {page}
+                                    {totalPages !== undefined
+                                        ? ` / ${totalPages}`
+                                        : ""}
                                 </span>
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    disabled={page >= totalPages}
+                                    disabled={
+                                        totalPages !== undefined
+                                            ? page >= totalPages
+                                            : products.length < pageSize
+                                    }
                                     onClick={() =>
                                         handleParamChange(
                                             "page",

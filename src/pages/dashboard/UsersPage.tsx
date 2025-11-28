@@ -43,8 +43,11 @@ export default function UsersPage() {
     const users = Array.isArray(usersQuery.data)
         ? usersQuery.data
         : usersQuery.data?.users || [];
-    const total = usersQuery.data?.total || users.length;
-    const totalPages = Math.ceil(total / pageSize) || 1;
+
+    const totalFromApi = usersQuery.data?.total as number | undefined;
+    const totalPages = totalFromApi
+        ? Math.max(1, Math.ceil(totalFromApi / pageSize))
+        : undefined;
 
     return (
         <div className="flex">
@@ -157,7 +160,11 @@ export default function UsersPage() {
                         {/* Pagination */}
                         <div className="flex items-center justify-between mt-4">
                             <p className="text-sm text-muted-foreground">
-                                Hiển thị {users.length} / {total} người dùng
+                                Hiển thị {users.length}
+                                {totalFromApi !== undefined
+                                    ? ` / ${totalFromApi}`
+                                    : ""}{" "}
+                                người dùng
                             </p>
                             <div className="flex gap-2">
                                 <Button
@@ -174,12 +181,19 @@ export default function UsersPage() {
                                     Trước
                                 </Button>
                                 <span className="flex items-center px-3 text-sm">
-                                    Trang {page} / {totalPages || 1}
+                                    Trang {page}
+                                    {totalPages !== undefined
+                                        ? ` / ${totalPages}`
+                                        : ""}
                                 </span>
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    disabled={page >= totalPages}
+                                    disabled={
+                                        totalPages !== undefined
+                                            ? page >= totalPages
+                                            : users.length < pageSize
+                                    }
                                     onClick={() =>
                                         handleParamChange(
                                             "page",
