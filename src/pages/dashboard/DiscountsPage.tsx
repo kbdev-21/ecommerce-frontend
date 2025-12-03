@@ -166,7 +166,7 @@ export default function DiscountsPage() {
                     onChange={(e) =>
                       setNewLimit(e.target.value)
                     }
-                    placeholder="100"
+                    placeholder="10"
                     required
                   />
                 </div>

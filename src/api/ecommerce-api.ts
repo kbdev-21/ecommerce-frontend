@@ -1,7 +1,7 @@
 import axios from "axios";
 
-//const API_BASE_URL = "http://localhost:3333/api";
-const API_BASE_URL = "https://ecommerce-nestjs-uzre.onrender.com/api";
+const API_BASE_URL = "http://localhost:3333/api";
+//const API_BASE_URL = "https://ecommerce-nestjs-uzre.onrender.com/api";
 
 export type Variant = {
     id: string;
